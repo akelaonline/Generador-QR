@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Código QR</title>
+    <style>
+        :root {
+            --primary-color: #0066FF;
+            --background-color: #f8f9fa;
+            --border-color: #e9ecef;
+            --text-color: #333333;
+            --secondary-text: #6c757d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            padding: 40px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 32px;
+        }
+
+        .app-container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .qr-preview {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            padding: 40px;
+            aspect-ratio: 1;
+        }
+
+        .qr-code {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .options-panel {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            padding: 24px;
+        }
+
+        .section {
+            margin-bottom: 24px;
+        }
+
+        .section h3 {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-color);
+            margin-bottom: 12px;
+        }
+
+        .url-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .helper-text {
+            font-size: 13px;
+            color: var(--secondary-text);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, 40px);
+            gap: 8px;
+        }
+
+        .option-btn {
+            width: 40px;
+            height: 40px;
+            padding: 8px;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .option-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary-color);
+            background: #f0f7ff;
+        }
+
+        .option-btn.active {
+            border: 2px solid var(--primary-color);
+            background: #f0f7ff;
+        }
+
+        .color-presets {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+        }
+
+        .color-preset {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .format-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .size-slider {
+            width: 100%;
+            margin: 16px 0;
+        }
+
+        .download-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .color-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .color-input {
+            width: 100%;
+            height: 40px;
+            padding: 4px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Generador de Código QR</h1>
+        <div class="app-container">
+            <div class="qr-preview">
+                <div id="qrCode" class="qr-code"></div>
+            </div>
+            
+            <div class="options-panel">
+                <div class="section">
+                    <h3>URL</h3>
+                    <input type="text" class="url-input" placeholder="Escribe o pega la URL">
+                    <p class="helper-text">El código QR abrirá esta URL</p>
+                </div>
+
+                <div class="section">
+                    <h3>Puntos</h3>
+                    <div class="options-grid">
+                        <button class="option-btn active" data-dots-style="square">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="4" y="4" width="16" height="16"/>
+                            </svg>
+                        </button>
+                        <button class="option-btn" data-dots-style="dots">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="8"/>
+                            </svg>
+                        </button>
+                        <button class="option-btn" data-dots-style="rounded">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="4" y="4" width="16" height="16" rx="4"/>
+                            </svg>
+                        </button>
+                        <button class="option-btn" data-dots-style="classy">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M4 4L20 4L20 20L4 20L4 4ZM6 6L18 6L18 18L6 18L6 6Z"/>
+                            </svg>
+                        </button>
+                        <button class="option-btn" data-dots-style="classy-rounded">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M8 4h8a4 4 0 014 4v8a4 4 0 01-4 4H8a4 4 0 01-4-4V8a4 4 0 014-4z"/>
+                            </svg>
+                        </button>
+                        <button class="option-btn" data-dots-style="extra-rounded">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Borde del marcador</h3>
+                    <div class="options-grid">
+                        <button class="option-btn active" data-corner-style="square">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M4 4h16v16H4z"/>
+                            </svg>
+                        </button>
+                        <button class="option-btn" data-corner-style="rounded">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M4 8a4 4 0 014-4h8a4 4 0 014 4v8a4 4 0 01-4 4H8a4 4 0 01-4-4z"/>
+                            </svg>
+                        </button>
+                        <button class="option-btn" data-corner-style="extra-rounded">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Centro del marcador</h3>
+                    <div class="options-grid">
+                        <button class="option-btn active" data-center-style="square">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="8" y="8" width="8" height="8"/>
+                            </svg>
+                        </button>
+                        <button class="option-btn" data-center-style="dot">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="4"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Color</h3>
+                    <div class="color-section">
+                        <input type="color" id="mainColor" class="color-input" value="#000000">
+                        <div class="color-presets">
+                            <button class="color-preset" style="background-color: #000000"></button>
+                            <button class="color-preset" style="background-color: #0066FF"></button>
+                            <button class="color-preset" style="background-color: #FF6600"></button>
+                            <button class="color-preset" style="background-color: #FF0000"></button>
+                            <button class="color-preset" style="background-color: #009933"></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Formato y tamaño</h3>
+                    <select class="format-select">
+                        <option value="png">PNG</option>
+                        <option value="jpg">JPG</option>
+                        <option value="svg">SVG</option>
+                    </select>
+                    <input type="range" class="size-slider" min="128" max="512" value="256">
+                    <span class="size-value">256x256</span>
+                </div>
+
+                <button class="download-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                    </svg>
+                    Descargar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const qrCode = new QRCodeStyling({
+                width: 256,
+                height: 256,
+                data: "Ingresa una URL",
+                margin: 10,
+                qrOptions: {
+                    errorCorrectionLevel: 'H'
+                },
+                dotsOptions: {
+                    type: 'square',
+                    color: '#000000'
+                },
+                backgroundOptions: {
+                    color: "#ffffff",
+                },
+                cornersSquareOptions: {
+                    type: 'square',
+                    color: '#000000'
+                },
+                cornersDotOptions: {
+                    type: 'square',
+                    color: '#000000'
+                }
+            });
+
+            qrCode.append(document.getElementById('qrCode'));
+
+            // URL Input
+            const urlInput = document.querySelector('.url-input');
+            let typingTimer;
+            
+            urlInput.addEventListener('input', function() {
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(() => {
+                    if (this.value) {
+                        qrCode.update({
+                            data: this.value
+                        });
+                    }
+                }, 500);
+            });
+
+            // Estilos de puntos
+            document.querySelectorAll('[data-dots-style]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const buttons = document.querySelectorAll('[data-dots-style]');
+                    buttons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    qrCode.update({
+                        dotsOptions: {
+                            type: this.dataset.dotsStyle,
+                            color: document.getElementById('mainColor').value
+                        }
+                    });
+                });
+            });
+
+            // Estilos de bordes
+            document.querySelectorAll('[data-corner-style]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const buttons = document.querySelectorAll('[data-corner-style]');
+                    buttons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    qrCode.update({
+                        cornersSquareOptions: {
+                            type: this.dataset.cornerStyle,
+                            color: document.getElementById('mainColor').value
+                        }
+                    });
+                });
+            });
+
+            // Estilos del centro
+            document.querySelectorAll('[data-center-style]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const buttons = document.querySelectorAll('[data-center-style]');
+                    buttons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    qrCode.update({
+                        cornersDotOptions: {
+                            type: this.dataset.centerStyle === 'dot' ? 'dot' : 'square',
+                            color: document.getElementById('mainColor').value
+                        }
+                    });
+                });
+            });
+
+            // Color
+            const mainColor = document.getElementById('mainColor');
+            const colorPresets = document.querySelectorAll('.color-preset');
+            
+            mainColor.addEventListener('change', function() {
+                const color = this.value;
+                qrCode.update({
+                    dotsOptions: { color },
+                    cornersSquareOptions: { color },
+                    cornersDotOptions: { color }
+                });
+            });
+
+            colorPresets.forEach(preset => {
+                preset.addEventListener('click', function() {
+                    const color = this.style.backgroundColor;
+                    mainColor.value = rgbToHex(color);
+                    qrCode.update({
+                        dotsOptions: { color: mainColor.value },
+                        cornersSquareOptions: { color: mainColor.value },
+                        cornersDotOptions: { color: mainColor.value }
+                    });
+                });
+            });
+
+            // Tamaño
+            const sizeSlider = document.querySelector('.size-slider');
+            const sizeValue = document.querySelector('.size-value');
+            
+            sizeSlider.addEventListener('input', function() {
+                const size = parseInt(this.value);
+                sizeValue.textContent = `${size}x${size}`;
+                qrCode.update({
+                    width: size,
+                    height: size
+                });
+            });
+
+            // Descarga
+            document.querySelector('.download-btn').addEventListener('click', async function() {
+                if (!urlInput.value) {
+                    alert('Por favor, ingresa una URL primero');
+                    return;
+                }
+
+                const format = document.querySelector('.format-select').value;
+                try {
+                    await qrCode.download({
+                        extension: format
+                    });
+                } catch (e) {
+                    console.error('Error al descargar:', e);
+                    alert('Error al descargar el código QR');
+                }
+            });
+
+            // Función auxiliar para convertir RGB a Hex
+            function rgbToHex(rgb) {
+                const rgbValues = rgb.match(/\d+/g);
+                if (!rgbValues) return rgb;
+                return '#' + rgbValues.map(x => {
+                    const hex = parseInt(x).toString(16);
+                    return hex.length === 1 ? '0' + hex : hex;
+                }).join('');
+            }
+        });
+    </script>
+</body>
+</html> 
