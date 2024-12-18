@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de VCARD QR</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Menu</h2>
+        <nav>
+            <a href="index.html" class="nav-item">URL QR</a>
+            <a href="#" class="nav-item active">VCARD QR</a>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <h1>Generador de QR para VCARD</h1>
+            <div class="app-container">
+                <div class="qr-preview">
+                    <div id="vcardQrCode"></div>
+                </div>
+                
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Información Personal</label>
+                        <div class="input-group">
+                            <input type="text" id="vcard-name" placeholder="Nombre completo *" required>
+                            <input type="text" id="vcard-title" placeholder="Título o cargo">
+                            <input type="text" id="vcard-company" placeholder="Empresa">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Contacto</label>
+                        <div class="input-group">
+                            <input type="email" id="vcard-email" placeholder="Email principal">
+                            <input type="email" id="vcard-email2" placeholder="Email secundario">
+                            <input type="tel" id="vcard-phone" placeholder="Teléfono fijo">
+                            <input type="tel" id="vcard-mobile" placeholder="Teléfono móvil">
+                            <input type="tel" id="vcard-fax" placeholder="Fax">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Web y Redes Sociales</label>
+                        <div class="input-group">
+                            <input type="url" id="vcard-website" placeholder="Sitio web">
+                            <input type="url" id="vcard-linkedin" placeholder="LinkedIn URL">
+                            <input type="url" id="vcard-twitter" placeholder="Twitter/X URL">
+                            <input type="url" id="vcard-facebook" placeholder="Facebook URL">
+                            <input type="url" id="vcard-instagram" placeholder="Instagram URL">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Ubicación</label>
+                        <div class="input-group">
+                            <input type="text" id="vcard-street" placeholder="Calle y número">
+                            <input type="text" id="vcard-city" placeholder="Ciudad">
+                            <input type="text" id="vcard-state" placeholder="Estado/Provincia">
+                            <input type="text" id="vcard-country" placeholder="País">
+                            <input type="text" id="vcard-postal" placeholder="Código Postal">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Información Adicional</label>
+                        <div class="input-group">
+                            <input type="text" id="vcard-birthday" placeholder="Fecha de nacimiento (YYYY-MM-DD)">
+                            <input type="text" id="vcard-notes" placeholder="Notas adicionales">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Personalización QR</label>
+                        <div class="qr-options">
+                            <select id="vcard-format-select">
+                                <option value="png">PNG</option>
+                                <option value="jpeg">JPG</option>
+                            </select>
+                            
+                            <div class="size-control">
+                                <span>Tamaño: <span id="vcard-size-value">256x256</span></span>
+                                <input type="range" id="vcard-size-slider" min="128" max="512" value="256" step="32">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="vcard-download-btn" class="download-button">
+                        <span class="icon">⬇</span>
+                        Descargar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+    <script src="vcard.js"></script>
+</body>
+</html>

@@ -1,40 +1,53 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Configuración inicial
-    let qrCode = null;
+    // Inicialización de la navegación
+    initNavigation();
     
-    // Inicializar QR Code
-    function initQRCode() {
-        const qrContainer = document.getElementById("qrCode");
-        qrContainer.innerHTML = ''; // Limpiar contenedor
-        
-        qrCode = new QRCode(qrContainer, {
-            text: "Ingresa una URL",
-            width: 256,
-            height: 256,
-            colorDark: "#000000",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.H
-        });
-    }
-    
-    initQRCode();
+    // Inicialización de los generadores QR
+    initURLQRGenerator();
+    initVCARDQRGenerator();
+});
 
-    // Manejar tabs
-    const tabs = document.querySelectorAll('.tab-btn');
-    const tabContents = document.querySelectorAll('.tab-content');
-    
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            tabs.forEach(t => t.classList.remove('active'));
-            tabContents.forEach(content => content.classList.remove('active'));
-            
-            tab.classList.add('active');
-            const targetContent = document.getElementById(tab.dataset.tab);
-            if (targetContent) {
-                targetContent.classList.add('active');
-            }
+// Manejo de la navegación
+function initNavigation() {
+    const navItems = document.querySelectorAll('.nav-item');
+    const sections = document.querySelectorAll('.section-content');
+
+    navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetSection = item.dataset.section;
+
+            // Actualizar navegación
+            navItems.forEach(nav => nav.classList.remove('active'));
+            item.classList.add('active');
+
+            // Mostrar sección correspondiente
+            sections.forEach(section => {
+                section.classList.remove('active');
+                if (section.id === targetSection) {
+                    section.classList.add('active');
+                }
+            });
         });
     });
+}
+
+// Generador QR para URLs
+function initURLQRGenerator() {
+    const urlQrCode = new QRCodeStyling({
+        width: 256,
+        height: 256,
+        data: "Ingresa una URL",
+        dotsOptions: {
+            color: "#000000",
+            type: "square"
+        },
+        backgroundOptions: {
+            color: "#ffffff",
+        }
+    });
+
+    urlQrCode.append(document.getElementById("qrCode"));
 
     // Manejar input de URL
     const urlInput = document.querySelector('.url-input');
@@ -72,16 +85,14 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateQRCode(text, darkColor = "#000000", lightColor = "#ffffff") {
         if (!text) return; // No actualizar si no hay texto
         
-        const qrContainer = document.getElementById("qrCode");
-        qrContainer.innerHTML = '';
-        
-        qrCode = new QRCode(qrContainer, {
-            text: text,
-            width: parseInt(sizeRange.value),
-            height: parseInt(sizeRange.value),
-            colorDark: darkColor,
-            colorLight: lightColor,
-            correctLevel: QRCode.CorrectLevel.H
+        urlQrCode.update({
+            data: text,
+            dotsOptions: {
+                color: darkColor
+            },
+            backgroundOptions: {
+                color: lightColor
+            }
         });
     }
 
@@ -89,6 +100,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (urlInput.value) {
             updateQRCode(urlInput.value, mainColor.value, bgColor.value);
         }
+        urlQrCode.update({
+            width: size,
+            height: size
+        });
     }
 
     // Manejar descarga
@@ -99,16 +114,95 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         const format = document.querySelector('.format-select').value;
-        const canvas = document.querySelector('#qrCode canvas');
-        
-        if (canvas) {
-            const dataUrl = canvas.toDataURL(`image/${format}`);
-            const link = document.createElement('a');
-            link.download = `qr-code.${format}`;
-            link.href = dataUrl;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        urlQrCode.download({
+            extension: format
+        });
+    });
+}
+
+// Generador QR para VCARD
+function initVCARDQRGenerator() {
+    const vcardQrCode = new QRCodeStyling({
+        width: 256,
+        height: 256,
+        data: "BEGIN:VCARD\nVERSION:3.0\nEND:VCARD",
+        dotsOptions: {
+            color: "#000000",
+            type: "square"
+        },
+        backgroundOptions: {
+            color: "#ffffff",
         }
     });
-}); 
+
+    vcardQrCode.append(document.getElementById("vcardQrCode"));
+
+    // Campos del formulario VCARD
+    const vcardInputs = {
+        name: document.getElementById('vcard-name'),
+        title: document.getElementById('vcard-title'),
+        company: document.getElementById('vcard-company'),
+        email: document.getElementById('vcard-email'),
+        phone: document.getElementById('vcard-phone'),
+        mobile: document.getElementById('vcard-mobile'),
+        website: document.getElementById('vcard-website'),
+        address: document.getElementById('vcard-address'),
+        linkedin: document.getElementById('vcard-linkedin')
+    };
+
+    // Función para generar el string VCARD
+    function generateVCARDString() {
+        let vcard = [
+            'BEGIN:VCARD',
+            'VERSION:3.0'
+        ];
+
+        if (vcardInputs.name.value) {
+            vcard.push(`FN:${vcardInputs.name.value}`);
+            vcard.push(`N:${vcardInputs.name.value.split(' ').reverse().join(';')}`);
+        }
+        if (vcardInputs.title.value) vcard.push(`TITLE:${vcardInputs.title.value}`);
+        if (vcardInputs.company.value) vcard.push(`ORG:${vcardInputs.company.value}`);
+        if (vcardInputs.email.value) vcard.push(`EMAIL:${vcardInputs.email.value}`);
+        if (vcardInputs.phone.value) vcard.push(`TEL;TYPE=WORK:${vcardInputs.phone.value}`);
+        if (vcardInputs.mobile.value) vcard.push(`TEL;TYPE=CELL:${vcardInputs.mobile.value}`);
+        if (vcardInputs.website.value) vcard.push(`URL:${vcardInputs.website.value}`);
+        if (vcardInputs.address.value) vcard.push(`ADR:;;${vcardInputs.address.value}`);
+        if (vcardInputs.linkedin.value) vcard.push(`X-SOCIALPROFILE;TYPE=linkedin:${vcardInputs.linkedin.value}`);
+
+        vcard.push('END:VCARD');
+        return vcard.join('\n');
+    }
+
+    // Actualizar QR cuando se modifique cualquier campo
+    Object.values(vcardInputs).forEach(input => {
+        input.addEventListener('input', () => {
+            const vcardString = generateVCARDString();
+            vcardQrCode.update({
+                data: vcardString
+            });
+        });
+    });
+
+    // Control de tamaño
+    const vcardSizeSlider = document.getElementById('vcard-size-slider');
+    const vcardSizeValue = document.getElementById('vcard-size-value');
+
+    vcardSizeSlider.addEventListener('input', function() {
+        const size = parseInt(this.value);
+        vcardSizeValue.textContent = `${size}x${size}`;
+        vcardQrCode.update({
+            width: size,
+            height: size
+        });
+    });
+
+    // Botón de descarga
+    const vcardDownloadBtn = document.getElementById('vcard-download-btn');
+    vcardDownloadBtn.addEventListener('click', () => {
+        const format = document.getElementById('vcard-format-select').value;
+        vcardQrCode.download({
+            extension: format
+        });
+    });
+}

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generador de Código QR</title>
+    <link rel="stylesheet" href="styles.css">
     <style>
         :root {
             --primary-color: #0066FF;
@@ -26,6 +27,54 @@
             display: flex;
             justify-content: center;
             padding: 20px;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100vh;
+            background-color: var(--background-color);
+            padding: 20px;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .sidebar h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 16px;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-item.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .nav-item:hover {
+            background-color: #f0f7ff;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        .section-content {
+            display: none;
+        }
+
+        .section-content.active {
+            display: block;
         }
 
         .container {
@@ -64,103 +113,136 @@
             justify-content: center;
         }
 
-        .options-panel {
+        .controls {
             background: white;
             border-radius: 12px;
             border: 1px solid var(--border-color);
             padding: 24px;
         }
 
-        .section {
+        .control-group {
             margin-bottom: 24px;
         }
 
-        .section h3 {
+        .control-group label {
             font-size: 14px;
             font-weight: 500;
             color: var(--text-color);
             margin-bottom: 12px;
         }
 
-        .url-input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
-
-        .helper-text {
-            font-size: 13px;
-            color: var(--secondary-text);
-        }
-
-        .options-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, 40px);
+        .dot-options {
+            display: flex;
             gap: 8px;
         }
 
-        .option-btn {
-            width: 40px;
-            height: 40px;
-            padding: 8px;
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .option-btn svg {
+        .dot-preview {
             width: 24px;
             height: 24px;
-            fill: currentColor;
+            border-radius: 50%;
+            background-color: #000000;
         }
 
-        .option-btn:hover {
-            border-color: var(--primary-color);
-            background: #f0f7ff;
+        .dot-preview.dots {
+            background-color: #ffffff;
+            border: 2px solid #000000;
         }
 
-        .option-btn.active {
-            border: 2px solid var(--primary-color);
-            background: #f0f7ff;
+        .dot-preview.rounded {
+            background-color: #ffffff;
+            border: 2px solid #000000;
+            border-radius: 8px;
         }
 
-        .color-presets {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
+        .dot-preview.classy {
+            background-color: #ffffff;
+            border: 2px solid #000000;
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px #000000;
+        }
+
+        .dot-preview.classy-rounded {
+            background-color: #ffffff;
+            border: 2px solid #000000;
+            border-radius: 8px;
+            box-shadow: 0 0 0 2px #000000;
+        }
+
+        .corner-options {
+            display: flex;
             gap: 8px;
         }
 
-        .color-preset {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
+        .corner-preview {
+            width: 24px;
+            height: 24px;
+            background-color: #000000;
+        }
+
+        .corner-preview.dot {
+            background-color: #ffffff;
+            border: 2px solid #000000;
+            border-radius: 50%;
+        }
+
+        .corner-preview.extra-rounded {
+            background-color: #ffffff;
+            border: 2px solid #000000;
+            border-radius: 16px;
+        }
+
+        .center-options {
+            display: flex;
+            gap: 8px;
+        }
+
+        .center-preview {
+            width: 24px;
+            height: 24px;
+            background-color: #000000;
+        }
+
+        .center-preview.dot {
+            background-color: #ffffff;
+            border: 2px solid #000000;
+            border-radius: 50%;
+        }
+
+        .color-options {
+            display: flex;
+            gap: 8px;
+        }
+
+        .color-option {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #000000;
             border: none;
+            padding: 0;
             cursor: pointer;
         }
 
-        .format-select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
+        .color-option.active {
+            box-shadow: 0 0 0 2px #ffffff;
+        }
+
+        .size-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #size-value {
             font-size: 14px;
-            margin-bottom: 16px;
+            color: var(--text-color);
         }
 
-        .size-slider {
+        #size-slider {
             width: 100%;
-            margin: 16px 0;
         }
 
-        .download-btn {
+        .download-button {
             width: 100%;
             padding: 12px;
             background: var(--primary-color);
@@ -177,147 +259,119 @@
             margin-top: 24px;
         }
 
+        .icon {
+            font-size: 18px;
+        }
+
         @media (max-width: 768px) {
             .app-container {
                 grid-template-columns: 1fr;
             }
         }
-
-        .color-section {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .color-input {
-            width: 100%;
-            height: 40px;
-            padding: 4px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Generador de Código QR</h1>
-        <div class="app-container">
-            <div class="qr-preview">
-                <div id="qrCode" class="qr-code"></div>
-            </div>
-            
-            <div class="options-panel">
-                <div class="section">
-                    <h3>URL</h3>
-                    <input type="text" class="url-input" placeholder="Escribe o pega la URL">
-                    <p class="helper-text">El código QR abrirá esta URL</p>
-                </div>
+    <div class="sidebar">
+        <h2>Menu</h2>
+        <nav>
+            <a href="#" class="nav-item active" data-section="url-qr">URL QR</a>
+            <a href="vcard.html" class="nav-item">VCARD QR</a>
+        </nav>
+    </div>
 
-                <div class="section">
-                    <h3>Puntos</h3>
-                    <div class="options-grid">
-                        <button class="option-btn active" data-dots-style="square">
-                            <svg viewBox="0 0 24 24">
-                                <rect x="4" y="4" width="16" height="16"/>
-                            </svg>
-                        </button>
-                        <button class="option-btn" data-dots-style="dots">
-                            <svg viewBox="0 0 24 24">
-                                <circle cx="12" cy="12" r="8"/>
-                            </svg>
-                        </button>
-                        <button class="option-btn" data-dots-style="rounded">
-                            <svg viewBox="0 0 24 24">
-                                <rect x="4" y="4" width="16" height="16" rx="4"/>
-                            </svg>
-                        </button>
-                        <button class="option-btn" data-dots-style="classy">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M4 4L20 4L20 20L4 20L4 4ZM6 6L18 6L18 18L6 18L6 6Z"/>
-                            </svg>
-                        </button>
-                        <button class="option-btn" data-dots-style="classy-rounded">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M8 4h8a4 4 0 014 4v8a4 4 0 01-4 4H8a4 4 0 01-4-4V8a4 4 0 014-4z"/>
-                            </svg>
-                        </button>
-                        <button class="option-btn" data-dots-style="extra-rounded">
-                            <svg viewBox="0 0 24 24">
-                                <circle cx="12" cy="12" r="10"/>
-                            </svg>
-                        </button>
+    <div class="main-content">
+        <div class="container">
+            <div class="section-content active" id="url-qr">
+                <h1>Generador de QR para URL</h1>
+                <div class="app-container">
+                    <div class="qr-preview">
+                        <div id="qrCode"></div>
                     </div>
-                </div>
-
-                <div class="section">
-                    <h3>Borde del marcador</h3>
-                    <div class="options-grid">
-                        <button class="option-btn active" data-corner-style="square">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M4 4h16v16H4z"/>
-                            </svg>
-                        </button>
-                        <button class="option-btn" data-corner-style="rounded">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M4 8a4 4 0 014-4h8a4 4 0 014 4v8a4 4 0 01-4 4H8a4 4 0 01-4-4z"/>
-                            </svg>
-                        </button>
-                        <button class="option-btn" data-corner-style="extra-rounded">
-                            <svg viewBox="0 0 24 24">
-                                <circle cx="12" cy="12" r="10"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <h3>Centro del marcador</h3>
-                    <div class="options-grid">
-                        <button class="option-btn active" data-center-style="square">
-                            <svg viewBox="0 0 24 24">
-                                <rect x="8" y="8" width="8" height="8"/>
-                            </svg>
-                        </button>
-                        <button class="option-btn" data-center-style="dot">
-                            <svg viewBox="0 0 24 24">
-                                <circle cx="12" cy="12" r="4"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <h3>Color</h3>
-                    <div class="color-section">
-                        <input type="color" id="mainColor" class="color-input" value="#000000">
-                        <div class="color-presets">
-                            <button class="color-preset" style="background-color: #000000"></button>
-                            <button class="color-preset" style="background-color: #0066FF"></button>
-                            <button class="color-preset" style="background-color: #FF6600"></button>
-                            <button class="color-preset" style="background-color: #FF0000"></button>
-                            <button class="color-preset" style="background-color: #009933"></button>
+                    <div class="controls">
+                        <div class="control-group">
+                            <label>URL</label>
+                            <input type="text" id="url" class="url-input" placeholder="Escribe o pega la URL">
+                            <small>El código QR abrirá esta URL</small>
                         </div>
+
+                        <div class="control-group">
+                            <label>Estilo de Puntos</label>
+                            <div class="dot-options">
+                                <button class="option active" data-type="square">
+                                    <div class="dot-preview square"></div>
+                                </button>
+                                <button class="option" data-type="dots">
+                                    <div class="dot-preview dots"></div>
+                                </button>
+                                <button class="option" data-type="rounded">
+                                    <div class="dot-preview rounded"></div>
+                                </button>
+                                <button class="option" data-type="classy">
+                                    <div class="dot-preview classy"></div>
+                                </button>
+                                <button class="option" data-type="classy-rounded">
+                                    <div class="dot-preview classy-rounded"></div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label>Estilo de Esquinas</label>
+                            <div class="corner-options">
+                                <button class="option active" data-type="square">
+                                    <div class="corner-preview square"></div>
+                                </button>
+                                <button class="option" data-type="dot">
+                                    <div class="corner-preview dot"></div>
+                                </button>
+                                <button class="option" data-type="extra-rounded">
+                                    <div class="corner-preview extra-rounded"></div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label>Estilo del Centro</label>
+                            <div class="center-options">
+                                <button class="option active" data-type="square">
+                                    <div class="center-preview square"></div>
+                                </button>
+                                <button class="option" data-type="dot">
+                                    <div class="center-preview dot"></div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label>Color</label>
+                            <div class="color-options">
+                                <button class="color-option active" style="background-color: #000000" data-color="#000000"></button>
+                                <button class="color-option" style="background-color: #0066FF" data-color="#0066FF"></button>
+                                <button class="color-option" style="background-color: #FF6B2C" data-color="#FF6B2C"></button>
+                                <button class="color-option" style="background-color: #F03E3E" data-color="#F03E3E"></button>
+                                <button class="color-option" style="background-color: #37B24D" data-color="#37B24D"></button>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label>Formato y tamaño</label>
+                            <select id="format-select">
+                                <option value="png">PNG</option>
+                                <option value="jpeg">JPG</option>
+                            </select>
+                            
+                            <div class="size-control">
+                                <span>Tamaño: <span id="size-value">256x256</span></span>
+                                <input type="range" id="size-slider" min="128" max="512" value="256" step="32">
+                            </div>
+                        </div>
+
+                        <button id="download-btn" class="download-button">
+                            <span class="icon">⬇</span>
+                            Descargar
+                        </button>
                     </div>
                 </div>
-
-                <div class="section">
-                    <h3>Formato y tamaño</h3>
-                    <select class="format-select">
-                        <option value="png">PNG</option>
-                        <option value="jpg">JPG</option>
-                        <option value="svg">SVG</option>
-                    </select>
-                    <input type="range" class="size-slider" min="128" max="512" value="256">
-                    <span class="size-value">256x256</span>
-                </div>
-
-                <button class="download-btn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
-                    </svg>
-                    Descargar
-                </button>
             </div>
         </div>
     </div>
@@ -325,6 +379,19 @@
     <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const sidebarNavItems = document.querySelectorAll('.nav-item');
+            const sectionContents = document.querySelectorAll('.section-content');
+
+            sidebarNavItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const sectionId = this.dataset.section;
+                    sidebarNavItems.forEach(navItem => navItem.classList.remove('active'));
+                    this.classList.add('active');
+                    sectionContents.forEach(section => section.classList.remove('active'));
+                    document.getElementById(sectionId).classList.add('active');
+                });
+            });
+
             const qrCode = new QRCodeStyling({
                 width: 256,
                 height: 256,
@@ -353,7 +420,7 @@
             qrCode.append(document.getElementById('qrCode'));
 
             // URL Input
-            const urlInput = document.querySelector('.url-input');
+            const urlInput = document.getElementById('url');
             let typingTimer;
             
             urlInput.addEventListener('input', function() {
@@ -367,82 +434,83 @@
                 }, 500);
             });
 
-            // Estilos de puntos
-            document.querySelectorAll('[data-dots-style]').forEach(button => {
-                button.addEventListener('click', function() {
-                    const buttons = document.querySelectorAll('[data-dots-style]');
-                    buttons.forEach(btn => btn.classList.remove('active'));
+            // Estilo de Puntos
+            const dotOptions = document.querySelectorAll('.dot-options .option');
+            dotOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    dotOptions.forEach(opt => opt.classList.remove('active'));
                     this.classList.add('active');
-                    
+                    const type = this.dataset.type;
                     qrCode.update({
                         dotsOptions: {
-                            type: this.dataset.dotsStyle,
-                            color: document.getElementById('mainColor').value
+                            type: type,
+                            color: '#000000'
                         }
                     });
                 });
             });
 
-            // Estilos de bordes
-            document.querySelectorAll('[data-corner-style]').forEach(button => {
-                button.addEventListener('click', function() {
-                    const buttons = document.querySelectorAll('[data-corner-style]');
-                    buttons.forEach(btn => btn.classList.remove('active'));
+            // Estilo de Esquinas
+            const cornerOptions = document.querySelectorAll('.corner-options .option');
+            cornerOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    cornerOptions.forEach(opt => opt.classList.remove('active'));
                     this.classList.add('active');
-                    
+                    const type = this.dataset.type;
                     qrCode.update({
                         cornersSquareOptions: {
-                            type: this.dataset.cornerStyle,
-                            color: document.getElementById('mainColor').value
+                            type: type,
+                            color: '#000000'
+                        },
+                        cornersDotOptions: {
+                            type: type,
+                            color: '#000000'
                         }
                     });
                 });
             });
 
-            // Estilos del centro
-            document.querySelectorAll('[data-center-style]').forEach(button => {
-                button.addEventListener('click', function() {
-                    const buttons = document.querySelectorAll('[data-center-style]');
-                    buttons.forEach(btn => btn.classList.remove('active'));
+            // Estilo del Centro
+            const centerOptions = document.querySelectorAll('.center-options .option');
+            centerOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    centerOptions.forEach(opt => opt.classList.remove('active'));
                     this.classList.add('active');
-                    
+                    const type = this.dataset.type;
                     qrCode.update({
-                        cornersDotOptions: {
-                            type: this.dataset.centerStyle === 'dot' ? 'dot' : 'square',
-                            color: document.getElementById('mainColor').value
-                        }
+                        imageOptions: {
+                            crossOrigin: 'anonymous',
+                            margin: 0
+                        },
+                        image: type === 'dot' ? 'https://raw.githubusercontent.com/kozakdenys/qr-code-styling/master/examples/images/dot.png' : null
                     });
                 });
             });
 
             // Color
-            const mainColor = document.getElementById('mainColor');
-            const colorPresets = document.querySelectorAll('.color-preset');
-            
-            mainColor.addEventListener('change', function() {
-                const color = this.value;
-                qrCode.update({
-                    dotsOptions: { color },
-                    cornersSquareOptions: { color },
-                    cornersDotOptions: { color }
-                });
-            });
-
-            colorPresets.forEach(preset => {
-                preset.addEventListener('click', function() {
-                    const color = this.style.backgroundColor;
-                    mainColor.value = rgbToHex(color);
+            const colorOptions = document.querySelectorAll('.color-options .color-option');
+            colorOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    colorOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    const color = this.dataset.color;
                     qrCode.update({
-                        dotsOptions: { color: mainColor.value },
-                        cornersSquareOptions: { color: mainColor.value },
-                        cornersDotOptions: { color: mainColor.value }
+                        dotsOptions: {
+                            color: color
+                        },
+                        cornersSquareOptions: {
+                            color: color
+                        },
+                        cornersDotOptions: {
+                            color: color
+                        }
                     });
                 });
             });
 
             // Tamaño
-            const sizeSlider = document.querySelector('.size-slider');
-            const sizeValue = document.querySelector('.size-value');
+            const sizeSlider = document.getElementById('size-slider');
+            const sizeValue = document.getElementById('size-value');
             
             sizeSlider.addEventListener('input', function() {
                 const size = parseInt(this.value);
@@ -454,13 +522,13 @@
             });
 
             // Descarga
-            document.querySelector('.download-btn').addEventListener('click', async function() {
+            document.getElementById('download-btn').addEventListener('click', async function() {
                 if (!urlInput.value) {
                     alert('Por favor, ingresa una URL primero');
                     return;
                 }
 
-                const format = document.querySelector('.format-select').value;
+                const format = document.getElementById('format-select').value;
                 try {
                     await qrCode.download({
                         extension: format
@@ -470,17 +538,7 @@
                     alert('Error al descargar el código QR');
                 }
             });
-
-            // Función auxiliar para convertir RGB a Hex
-            function rgbToHex(rgb) {
-                const rgbValues = rgb.match(/\d+/g);
-                if (!rgbValues) return rgb;
-                return '#' + rgbValues.map(x => {
-                    const hex = parseInt(x).toString(16);
-                    return hex.length === 1 ? '0' + hex : hex;
-                }).join('');
-            }
         });
     </script>
 </body>
-</html> 
+</html>
