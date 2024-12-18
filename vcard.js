@@ -1,18 +1,88 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const vcardQrCode = new QRCodeStyling({
-        width: 256,
-        height: 256,
-        data: "BEGIN:VCARD\nVERSION:3.0\nEND:VCARD",
+    let qrCode = new QRCodeStyling({
+        width: 400,
+        height: 400,
+        data: "",
         dotsOptions: {
             color: "#000000",
             type: "square"
         },
+        cornersSquareOptions: {
+            type: "square"
+        },
         backgroundOptions: {
             color: "#ffffff",
+        },
+        imageOptions: {
+            hideBackgroundDots: true,
+            imageSize: 0.4,
+            margin: 0
         }
     });
 
-    vcardQrCode.append(document.getElementById('vcardQrCode'));
+    // Inicializar el código QR en el contenedor
+    qrCode.append(document.getElementById("vcardQrCode"));
+
+    // Manejar las pestañas
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            button.classList.add('active');
+            document.getElementById(button.dataset.tab).classList.add('active');
+        });
+    });
+
+    // Manejar opciones de estilo de puntos
+    const dotsStyleOptions = document.querySelectorAll('[data-dots-type]');
+    dotsStyleOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            dotsStyleOptions.forEach(opt => opt.classList.remove('active'));
+            option.classList.add('active');
+            
+            qrCode.update({
+                dotsOptions: {
+                    type: option.dataset.dotsType
+                }
+            });
+        });
+    });
+
+    // Manejar opciones de estilo de esquinas
+    const cornerStyleOptions = document.querySelectorAll('[data-corner-type]');
+    cornerStyleOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            cornerStyleOptions.forEach(opt => opt.classList.remove('active'));
+            option.classList.add('active');
+            
+            qrCode.update({
+                cornersSquareOptions: {
+                    type: option.dataset.cornerType
+                }
+            });
+        });
+    });
+
+    // Manejar opciones de color
+    const colorOptions = document.querySelectorAll('.color-option');
+    colorOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            colorOptions.forEach(opt => opt.classList.remove('active'));
+            option.classList.add('active');
+            
+            qrCode.update({
+                dotsOptions: {
+                    color: option.dataset.color
+                },
+                cornersSquareOptions: {
+                    color: option.dataset.color
+                }
+            });
+        });
+    });
 
     // Campos del formulario VCARD
     const vcardInputs = {
@@ -48,92 +118,94 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // Función para generar el string VCARD
-    function generateVCARDString() {
-        let vcard = [
-            'BEGIN:VCARD',
-            'VERSION:3.0'
-        ];
+    function generateVCardString() {
+        const name = vcardInputs.name.value;
+        const title = vcardInputs.title.value;
+        const company = vcardInputs.company.value;
+        const email = vcardInputs.email.value;
+        const email2 = vcardInputs.email2.value;
+        const phone = vcardInputs.phone.value;
+        const mobile = vcardInputs.mobile.value;
+        const fax = vcardInputs.fax.value;
+        const website = vcardInputs.website.value;
+        const linkedin = vcardInputs.linkedin.value;
+        const twitter = vcardInputs.twitter.value;
+        const facebook = vcardInputs.facebook.value;
+        const instagram = vcardInputs.instagram.value;
+        const street = vcardInputs.street.value;
+        const city = vcardInputs.city.value;
+        const state = vcardInputs.state.value;
+        const country = vcardInputs.country.value;
+        const postal = vcardInputs.postal.value;
+        const birthday = vcardInputs.birthday.value;
+        const notes = vcardInputs.notes.value;
 
-        // Información Personal
-        if (vcardInputs.name.value) {
-            vcard.push(`FN:${vcardInputs.name.value}`);
-            vcard.push(`N:${vcardInputs.name.value.split(' ').reverse().join(';')}`);
-        }
-        if (vcardInputs.title.value) vcard.push(`TITLE:${vcardInputs.title.value}`);
-        if (vcardInputs.company.value) vcard.push(`ORG:${vcardInputs.company.value}`);
-        
-        // Contacto
-        if (vcardInputs.email.value) vcard.push(`EMAIL;TYPE=WORK:${vcardInputs.email.value}`);
-        if (vcardInputs.email2.value) vcard.push(`EMAIL;TYPE=HOME:${vcardInputs.email2.value}`);
-        if (vcardInputs.phone.value) vcard.push(`TEL;TYPE=WORK:${vcardInputs.phone.value}`);
-        if (vcardInputs.mobile.value) vcard.push(`TEL;TYPE=CELL:${vcardInputs.mobile.value}`);
-        if (vcardInputs.fax.value) vcard.push(`TEL;TYPE=FAX:${vcardInputs.fax.value}`);
-        
-        // Web y Redes Sociales
-        if (vcardInputs.website.value) vcard.push(`URL:${vcardInputs.website.value}`);
-        if (vcardInputs.linkedin.value) vcard.push(`X-SOCIALPROFILE;TYPE=linkedin:${vcardInputs.linkedin.value}`);
-        if (vcardInputs.twitter.value) vcard.push(`X-SOCIALPROFILE;TYPE=twitter:${vcardInputs.twitter.value}`);
-        if (vcardInputs.facebook.value) vcard.push(`X-SOCIALPROFILE;TYPE=facebook:${vcardInputs.facebook.value}`);
-        if (vcardInputs.instagram.value) vcard.push(`X-SOCIALPROFILE;TYPE=instagram:${vcardInputs.instagram.value}`);
-        
-        // Ubicación
-        if (vcardInputs.street.value || vcardInputs.city.value || vcardInputs.state.value || 
-            vcardInputs.country.value || vcardInputs.postal.value) {
-            const adr = [
-                '', // PO box
-                '', // Extended address
-                vcardInputs.street.value || '',
-                vcardInputs.city.value || '',
-                vcardInputs.state.value || '',
-                vcardInputs.postal.value || '',
-                vcardInputs.country.value || ''
-            ];
-            vcard.push(`ADR;TYPE=WORK:${adr.join(';')}`);
-        }
-        
-        // Información Adicional
-        if (vcardInputs.birthday.value) vcard.push(`BDAY:${vcardInputs.birthday.value}`);
-        if (vcardInputs.notes.value) vcard.push(`NOTE:${vcardInputs.notes.value}`);
+        let vcard = 'BEGIN:VCARD\nVERSION:3.0\n';
 
-        vcard.push('END:VCARD');
-        return vcard.join('\n');
+        if (name) vcard += `FN:${name}\n`;
+        if (title) vcard += `TITLE:${title}\n`;
+        if (company) vcard += `ORG:${company}\n`;
+        
+        // Emails
+        if (email) vcard += `EMAIL;TYPE=INTERNET:${email}\n`;
+        if (email2) vcard += `EMAIL;TYPE=INTERNET:${email2}\n`;
+        
+        // Teléfonos
+        if (phone) vcard += `TEL;TYPE=WORK,VOICE:${phone}\n`;
+        if (mobile) vcard += `TEL;TYPE=CELL,VOICE:${mobile}\n`;
+        if (fax) vcard += `TEL;TYPE=FAX:${fax}\n`;
+        
+        // URLs
+        if (website) vcard += `URL:${website}\n`;
+        if (linkedin) vcard += `X-SOCIALPROFILE;TYPE=linkedin:${linkedin}\n`;
+        if (twitter) vcard += `X-SOCIALPROFILE;TYPE=twitter:${twitter}\n`;
+        if (facebook) vcard += `X-SOCIALPROFILE;TYPE=facebook:${facebook}\n`;
+        if (instagram) vcard += `X-SOCIALPROFILE;TYPE=instagram:${instagram}\n`;
+        
+        // Dirección
+        if (street || city || state || country || postal) {
+            vcard += `ADR;TYPE=WORK:;;${street};${city};${state};${postal};${country}\n`;
+        }
+        
+        // Información adicional
+        if (birthday) vcard += `BDAY:${birthday}\n`;
+        if (notes) vcard += `NOTE:${notes}\n`;
+        
+        vcard += 'END:VCARD';
+        return vcard;
     }
 
-    // Actualizar QR cuando se modifique cualquier campo
+    // Manejar cambios en los inputs
     Object.values(vcardInputs).forEach(input => {
         if (input) { // Verificar que el elemento existe
             input.addEventListener('input', () => {
-                const vcardString = generateVCARDString();
-                vcardQrCode.update({
-                    data: vcardString
+                const vcard = generateVCardString();
+                qrCode.update({
+                    data: vcard
                 });
             });
         }
     });
 
-    // Control de tamaño
-    const vcardSizeSlider = document.getElementById('vcard-size-slider');
-    const vcardSizeValue = document.getElementById('vcard-size-value');
+    // Manejar cambios en el formato y tamaño
+    const formatSelect = document.getElementById('vcard-format-select');
+    const sizeSlider = document.getElementById('vcard-size-slider');
+    const sizeValue = document.getElementById('vcard-size-value');
 
-    vcardSizeSlider.addEventListener('input', function() {
-        const size = parseInt(this.value);
-        vcardSizeValue.textContent = `${size}x${size}`;
-        vcardQrCode.update({
+    sizeSlider.addEventListener('input', (e) => {
+        const size = parseInt(e.target.value);
+        sizeValue.textContent = `${size}x${size}`;
+        qrCode.update({
             width: size,
             height: size
         });
     });
 
-    // Botón de descarga
-    const vcardDownloadBtn = document.getElementById('vcard-download-btn');
-    vcardDownloadBtn.addEventListener('click', () => {
-        if (!vcardInputs.name.value) {
-            alert('Por favor, ingresa al menos el nombre completo');
-            return;
-        }
-
-        const format = document.getElementById('vcard-format-select').value;
-        vcardQrCode.download({
+    // Manejar descarga
+    const downloadBtn = document.getElementById('vcard-download-btn');
+    downloadBtn.addEventListener('click', () => {
+        const format = formatSelect.value;
+        qrCode.download({
             extension: format
         });
     });

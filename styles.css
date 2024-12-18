@@ -409,6 +409,344 @@ select {
     box-shadow: 0 0 0 2px var(--primary-color);
 }
 
+/* Estilos para la sección VCARD */
+.app-container {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 2rem;
+    padding: 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.qr-preview {
+    position: sticky;
+    top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.qr-container {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#vcardQrCode {
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#vcardQrCode canvas {
+    max-width: 100%;
+    height: auto !important;
+}
+
+.qr-style-controls {
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.control-group {
+    margin-bottom: 1.25rem;
+}
+
+.control-group:last-child {
+    margin-bottom: 0;
+}
+
+.control-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.style-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+}
+
+.style-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.style-option:hover {
+    border-color: #0066FF;
+    background: #f8f9ff;
+}
+
+.style-option.active {
+    border-color: #0066FF;
+    background: #f0f7ff;
+}
+
+.preview-box {
+    width: 100%;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    background: #f5f5f5;
+    border-radius: 6px;
+    padding: 0.25rem;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    background: #333;
+}
+
+.dot.square {
+    border-radius: 2px;
+}
+
+.dot.dots {
+    border-radius: 50%;
+}
+
+.dot.rounded {
+    border-radius: 3px;
+}
+
+.dot.classy {
+    transform: rotate(45deg);
+}
+
+.corner {
+    width: 20px;
+    height: 20px;
+    background: #333;
+    position: relative;
+}
+
+.corner.square {
+    border-radius: 2px;
+}
+
+.corner.dot {
+    border-radius: 50%;
+}
+
+.corner.extra-rounded {
+    border-radius: 6px;
+}
+
+.color-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+}
+
+.color-option {
+    position: relative;
+    width: 100%;
+    padding-top: 100%;
+    border-radius: 6px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.color-option:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.color-option.active {
+    border-color: #333;
+}
+
+.color-name {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    color: #666;
+    white-space: nowrap;
+}
+
+.size-format-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.size-control {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.size-label {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+#vcard-size-slider {
+    width: 100%;
+    height: 4px;
+    -webkit-appearance: none;
+    background: #e0e0e0;
+    border-radius: 2px;
+    outline: none;
+}
+
+#vcard-size-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #0066FF;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#vcard-size-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+}
+
+.format-select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background: white;
+    font-size: 0.8rem;
+    color: #333;
+    cursor: pointer;
+}
+
+.format-select:focus {
+    border-color: #0066FF;
+    outline: none;
+}
+
+/* Estilos para el formulario */
+.controls {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.tab-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    background: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #666;
+    white-space: nowrap;
+    font-size: 0.9rem;
+}
+
+.tab-btn:hover {
+    background: #f5f5f5;
+    color: #333;
+}
+
+.tab-btn.active {
+    background: #0066FF;
+    color: white;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.input-group input {
+    padding: 0.75rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    transition: border-color 0.2s;
+    font-size: 0.9rem;
+}
+
+.input-group input:focus {
+    border-color: #0066FF;
+    outline: none;
+}
+
+.download-button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    margin-top: 1rem;
+    background: #0066FF;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 0.9rem;
+}
+
+.download-button:hover {
+    background: #0052cc;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .app-container {
+        grid-template-columns: 1fr;
+    }
+
+    .qr-preview {
+        position: relative;
+        top: 0;
+    }
+
+    .tabs {
+        padding-bottom: 0.75rem;
+    }
+}
+
 @media (max-width: 768px) {
     .app-container {
         grid-template-columns: 1fr;

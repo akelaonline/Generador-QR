@@ -20,12 +20,123 @@
             <h1>Generador de QR para VCARD</h1>
             <div class="app-container">
                 <div class="qr-preview">
-                    <div id="vcardQrCode"></div>
+                    <div class="qr-container">
+                        <div id="vcardQrCode"></div>
+                    </div>
+                    <div class="qr-style-controls">
+                        <div class="control-group">
+                            <label>Estilo de Puntos</label>
+                            <div class="style-options">
+                                <button class="style-option active" data-dots-type="square">
+                                    <div class="preview-box">
+                                        <div class="dot square"></div>
+                                        <div class="dot square"></div>
+                                        <div class="dot square"></div>
+                                    </div>
+                                    <span>Cuadrados</span>
+                                </button>
+                                <button class="style-option" data-dots-type="dots">
+                                    <div class="preview-box">
+                                        <div class="dot dots"></div>
+                                        <div class="dot dots"></div>
+                                        <div class="dot dots"></div>
+                                    </div>
+                                    <span>Círculos</span>
+                                </button>
+                                <button class="style-option" data-dots-type="rounded">
+                                    <div class="preview-box">
+                                        <div class="dot rounded"></div>
+                                        <div class="dot rounded"></div>
+                                        <div class="dot rounded"></div>
+                                    </div>
+                                    <span>Redondeados</span>
+                                </button>
+                                <button class="style-option" data-dots-type="classy">
+                                    <div class="preview-box">
+                                        <div class="dot classy"></div>
+                                        <div class="dot classy"></div>
+                                        <div class="dot classy"></div>
+                                    </div>
+                                    <span>Elegante</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label>Estilo de Esquinas</label>
+                            <div class="style-options">
+                                <button class="style-option active" data-corner-type="square">
+                                    <div class="preview-box">
+                                        <div class="corner square"></div>
+                                    </div>
+                                    <span>Cuadradas</span>
+                                </button>
+                                <button class="style-option" data-corner-type="dot">
+                                    <div class="preview-box">
+                                        <div class="corner dot"></div>
+                                    </div>
+                                    <span>Círculos</span>
+                                </button>
+                                <button class="style-option" data-corner-type="extra-rounded">
+                                    <div class="preview-box">
+                                        <div class="corner extra-rounded"></div>
+                                    </div>
+                                    <span>Extra Redondas</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label>Color</label>
+                            <div class="color-options">
+                                <button class="color-option active" style="background-color: #000000" data-color="#000000">
+                                    <span class="color-name">Negro</span>
+                                </button>
+                                <button class="color-option" style="background-color: #0066FF" data-color="#0066FF">
+                                    <span class="color-name">Azul</span>
+                                </button>
+                                <button class="color-option" style="background-color: #FF6B2C" data-color="#FF6B2C">
+                                    <span class="color-name">Naranja</span>
+                                </button>
+                                <button class="color-option" style="background-color: #F03E3E" data-color="#F03E3E">
+                                    <span class="color-name">Rojo</span>
+                                </button>
+                                <button class="color-option" style="background-color: #37B24D" data-color="#37B24D">
+                                    <span class="color-name">Verde</span>
+                                </button>
+                                <button class="color-option" style="background-color: #7950F2" data-color="#7950F2">
+                                    <span class="color-name">Violeta</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label>Tamaño y Formato</label>
+                            <div class="size-format-controls">
+                                <div class="size-control">
+                                    <span class="size-label">Tamaño: <span id="vcard-size-value">400x400</span></span>
+                                    <input type="range" id="vcard-size-slider" min="200" max="800" value="400" step="50">
+                                </div>
+                                <select id="vcard-format-select" class="format-select">
+                                    <option value="png">PNG</option>
+                                    <option value="jpeg">JPG</option>
+                                    <option value="webp">WebP</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="controls">
-                    <div class="control-group">
-                        <label>Información Personal</label>
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="basic">Básico</button>
+                        <button class="tab-btn" data-tab="contact">Contacto</button>
+                        <button class="tab-btn" data-tab="social">Redes Sociales</button>
+                        <button class="tab-btn" data-tab="location">Ubicación</button>
+                        <button class="tab-btn" data-tab="additional">Adicional</button>
+                    </div>
+
+                    <div class="tab-content active" id="basic">
                         <div class="input-group">
                             <input type="text" id="vcard-name" placeholder="Nombre completo *" required>
                             <input type="text" id="vcard-title" placeholder="Título o cargo">
@@ -33,8 +144,7 @@
                         </div>
                     </div>
 
-                    <div class="control-group">
-                        <label>Contacto</label>
+                    <div class="tab-content" id="contact">
                         <div class="input-group">
                             <input type="email" id="vcard-email" placeholder="Email principal">
                             <input type="email" id="vcard-email2" placeholder="Email secundario">
@@ -44,8 +154,7 @@
                         </div>
                     </div>
 
-                    <div class="control-group">
-                        <label>Web y Redes Sociales</label>
+                    <div class="tab-content" id="social">
                         <div class="input-group">
                             <input type="url" id="vcard-website" placeholder="Sitio web">
                             <input type="url" id="vcard-linkedin" placeholder="LinkedIn URL">
@@ -55,8 +164,7 @@
                         </div>
                     </div>
 
-                    <div class="control-group">
-                        <label>Ubicación</label>
+                    <div class="tab-content" id="location">
                         <div class="input-group">
                             <input type="text" id="vcard-street" placeholder="Calle y número">
                             <input type="text" id="vcard-city" placeholder="Ciudad">
@@ -66,33 +174,19 @@
                         </div>
                     </div>
 
-                    <div class="control-group">
-                        <label>Información Adicional</label>
+                    <div class="tab-content" id="additional">
                         <div class="input-group">
                             <input type="text" id="vcard-birthday" placeholder="Fecha de nacimiento (YYYY-MM-DD)">
                             <input type="text" id="vcard-notes" placeholder="Notas adicionales">
                         </div>
                     </div>
 
-                    <div class="control-group">
-                        <label>Personalización QR</label>
-                        <div class="qr-options">
-                            <select id="vcard-format-select">
-                                <option value="png">PNG</option>
-                                <option value="jpeg">JPG</option>
-                            </select>
-                            
-                            <div class="size-control">
-                                <span>Tamaño: <span id="vcard-size-value">256x256</span></span>
-                                <input type="range" id="vcard-size-slider" min="128" max="512" value="256" step="32">
-                            </div>
-                        </div>
+                    <div class="control-group download-section">
+                        <button id="vcard-download-btn" class="download-button">
+                            <span class="icon">⬇</span>
+                            Descargar
+                        </button>
                     </div>
-
-                    <button id="vcard-download-btn" class="download-button">
-                        <span class="icon">⬇</span>
-                        Descargar
-                    </button>
                 </div>
             </div>
         </div>
